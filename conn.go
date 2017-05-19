@@ -4,10 +4,11 @@ import (
 	"net"
 	"time"
 	"github.com/lifei6671/goio/core"
+	"bytes"
 )
 
 type IMConn struct {
-	conn *net.TCPConn
+	conn net.Conn
 }
 
 func (c *IMConn) Write(b []byte) (int,error){
@@ -17,6 +18,7 @@ func (c *IMConn) Write(b []byte) (int,error){
 	if err != nil {
 		return 0,err
 	}
+
 	return c.conn.Write(b)
 }
 
@@ -29,7 +31,8 @@ func (c *IMConn) Read(b []byte)  (int,error) {
 	if err != nil {
 		return 0,err
 	}
-	pack,err = pack.Depack(bb)
+	buf := bytes.NewBuffer(bb)
+	pack,err = pack.Depack(buf)
 
 	if err != nil {
 		return 0,err
